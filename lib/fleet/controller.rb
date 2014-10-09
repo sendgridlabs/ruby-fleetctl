@@ -92,7 +92,7 @@ module Fleet
     def fetch_units(host: fleet_host)
       Fleetctl.logger.info 'Fetching units from host: '+host.inspect
       @units = Fleet::ItemSet.new
-      Fleetctl::Command.new('list-units', '-l') do |runner|
+      Fleetctl::Command.new('list-units', '-l', '-fields=unit,state,load,active,sub,desc,machine') do |runner|
         runner.run(host: host)
         parse_units(runner.output)
       end
