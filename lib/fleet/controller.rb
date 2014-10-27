@@ -2,9 +2,15 @@ module Fleet
   class Controller
     attr_writer :units
     attr_accessor :cluster
+    attr_reader :options
 
-    def initialize
+    def initialize(cfg)
+      @options = Options.new(cfg)
       @cluster = Fleet::Cluster.new(controller: self)
+    end
+
+    def logger
+      @options.logger
     end
 
     # returns an array of Fleet::Machine instances
@@ -57,7 +63,7 @@ module Fleet
     end
 
     def destroy(*unit_names)
-      runner = Fleetctl::Command.run('destroy', unit_names)
+      runner = Fleetctl::Command.run(@options, 'destroy', unit_names)
       clear_units
       runner.exit_code == 0
     end
@@ -78,21 +84,21 @@ module Fleet
 
     def unitfile_operation(command, files)
       clear_units
-      if Fleetctl.options.runner_class.to_s == 'Shell'
-        runner = Fleetctl::Command.run(command.to_s, files.map(&:path))
+      if @options.runner_class.to_s == 'Shell'
+        runner = Fleetctl::Command.run(@options, command.to_s, files.map(&:path))
       else
         runner = nil
-        Fleetctl::RemoteTempfile.open(*files) do |*remote_filenames|
-          runner = Fleetctl::Command.run(command.to_s, remote_filenames)
+        Fleetctl::RemoteTempfile.open(@options, *files) do |*remote_filenames|
+          runner = Fleetctl::Command.run(@options, command.to_s, remote_filenames)
         end
       end
       runner.exit_code == 0
     end
 
     def fetch_units(host: fleet_host)
-      Fleetctl.logger.info 'Fetching units from host: '+host.inspect
+      logger.info 'Fetching units from host: '+host.inspect
       @units = Fleet::ItemSet.new
-      Fleetctl::Command.new('list-units', '-l', '-fields=unit,state,load,active,sub,desc,machine') do |runner|
+      Fleetctl::Command.new(@options, 'list-units', '-l', '-fields=unit,state,load,active,sub,desc,machine') do |runner|
         runner.run(host: host)
         parse_units(runner.output)
       end
@@ -100,7 +106,7 @@ module Fleet
     end
 
     def parse_units(raw_table)
-      unit_hashes = Fleetctl::TableParser.parse(raw_table)
+      unit_hashes = Fleetctl::TableParser.parse(@options, raw_table)
       unit_hashes.each do |unit_attrs|
         if unit_attrs[:machine]
           machine_id, machine_ip = unit_attrs[:machine].split('/')

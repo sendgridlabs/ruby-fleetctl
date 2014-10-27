@@ -18,7 +18,7 @@ module Fleet
 
     [:status, :destroy, :stop, :start, :cat, :unload].each do |method_name|
       define_method(method_name) do
-        cmd = Fleetctl::Command.new(method_name, self.name)
+        cmd = Fleetctl::Command.new(@controller.options, method_name, self.name)
         runner = cmd.run(host: ip)
         runner.output
       end

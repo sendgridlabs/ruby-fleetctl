@@ -3,13 +3,14 @@ module Fleetctl
     attr_accessor :command
 
     class << self
-      def run(*cmd, &blk)
-        obj = new(*cmd, &blk)
+      def run(options, *cmd, &blk)
+        obj = new(options, *cmd, &blk)
         obj.run
       end
     end
 
-    def initialize(*cmd)
+    def initialize(options, *cmd)
+      @options = options
       @command = cmd
       yield(runner) if block_given?
     end
@@ -20,22 +21,22 @@ module Fleetctl
     end
 
     def runner
-      klass = "Fleetctl::Runner::#{Fleetctl.options.runner_class}".constantize
-      @runner ||= klass.new(expression)
+      klass = "Fleetctl::Runner::#{@options.runner_class}".constantize
+      @runner ||= klass.new(@options, expression)
     end
 
     private
 
     def global_options
-      Fleetctl.options.global.map { |k,v| "--#{k.to_s.gsub('_','-')}=#{v}" }
+      @options.global.map { |k,v| "--#{k.to_s.gsub('_','-')}=#{v}" }
     end
 
     def prefix
-      Fleetctl.options.command_prefix
+      @options.command_prefix
     end
 
     def executable
-      Fleetctl.options.executable
+      @options.executable
     end
 
     def expression

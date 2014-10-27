@@ -3,7 +3,8 @@ module Fleetctl
     class Runner
       attr_reader :command, :status, :exit_code, :stdout_data, :stderr_data, :exit_signal
 
-      def initialize(*command)
+      def initialize(options, *command)
+        @options = options
         @command = [*command].flatten.compact.join(' ')
       end
 

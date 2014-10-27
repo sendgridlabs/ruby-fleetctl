@@ -3,12 +3,13 @@ module Fleetctl
     attr_accessor :raw
 
     class << self
-      def parse(raw)
-        self.new(raw).parse
+      def parse(options, raw)
+        self.new(options, raw).parse
       end
     end
 
-    def initialize(raw)
+    def initialize(options, raw)
+      @options = options
       @raw = raw
     end
 
@@ -24,7 +25,7 @@ module Fleetctl
           end
         end
       else
-        Fleetctl.logger.error('ERROR in Fleetctl::TableParser.parse - no header row found')
+        @options.logger.error('ERROR in Fleetctl::TableParser.parse - no header row found')
         []
       end
     end  

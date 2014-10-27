@@ -20,29 +20,9 @@ require 'fleet/cluster'
 
 module Fleetctl
   class << self
-    extend Forwardable
-    def_delegators :instance, :machines, :units, :[], :sync, :start, :submit, :load, :destroy
-  
-    attr_reader :options
-
     # use if you might need more than one fleet
     def new(*args)
       Fleet::Controller.new(*args)
-    end
-
-    # get the global singleton controller
-    def instance
-      @instance ||= Fleet::Controller.new
-    end
-
-    # set global configuration options
-    def config(cfg)
-      @options = Options.new(cfg)
-    end
-
-    # set the logger for fleet to use
-    def logger
-      options.logger
     end
   end
 end

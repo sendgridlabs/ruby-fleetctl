@@ -1,11 +1,11 @@
 module Fleetctl
   module Runner
     class SSH < ::Fleetctl::Runner::Runner
-      def run(host: Fleetctl.options.fleet_host, user: Fleetctl.options.fleet_user, ssh_options: {})
+      def run(host: @options.fleet_host, user: @options.fleet_user, ssh_options: {})
         begin
           ssh_options = Fleetctl.options.ssh_options.merge(ssh_options)
           # return @output if @output
-          Fleetctl.logger.info "#{self.class.name} #{user}@#{host} RUNNING: #{command.inspect}"
+          @options.logger.info "#{self.class.name} #{user}@#{host} RUNNING: #{command.inspect}"
           Net::SSH.start(host, user, ssh_options) do |ssh|
             @stdout_data = ''
             @stderr_data = ''
@@ -36,13 +36,13 @@ module Fleetctl
             ssh.loop
             @output = @stdout_data
           end
-          Fleetctl.logger.info "EXIT CODE!: #{exit_code.inspect}"
-          Fleetctl.logger.info "STDOUT: #{@output.inspect}"
+          @options.logger.info "EXIT CODE!: #{exit_code.inspect}"
+          @options.logger.info "STDOUT: #{@output.inspect}"
           @output
         rescue => e
-          Fleetctl.logger.error 'ERROR in Runner#run'
-          Fleetctl.logger.error e.message
-          Fleetctl.logger.error e.backtrace.join("\n")
+          @options.logger.error 'ERROR in Runner#run'
+          @options.logger.error e.message
+          @options.logger.error e.backtrace.join("\n")
           raise e
         end
       end

@@ -1,14 +1,14 @@
 module Fleet
   class Discovery
     class << self
-      def hosts
+      def hosts(discovery_url)
         new(discovery_url).hosts
       end
     end
 
     attr_accessor :discovery_url
 
-    def initialize(discovery_url = Fleetctl.options.discovery_url)
+    def initialize(discovery_url)
       @discovery_url = discovery_url
     end
 
