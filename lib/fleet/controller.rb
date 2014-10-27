@@ -5,7 +5,7 @@ module Fleet
     attr_reader :options
 
     def initialize(cfg)
-      @options = Options.new(cfg)
+      @options = Fleetctl::Options.new(cfg)
       @cluster = Fleet::Cluster.new(controller: self)
     end
 
