@@ -67,7 +67,7 @@ module Fleet
     def discover!
       known_hosts = [@controller.options.fleet_host] | fleet_hosts.to_a
       clear
-      success_host = build_from(known_hosts) || build_from(Fleet::Discovery.hosts(@controller.options.discovery_url))
+      success_host = build_from(known_hosts) || build_from(Fleet::Discovery.hosts(@controller.options))
       if success_host
         @controller.logger.info 'Successfully recovered from host: ' + success_host.inspect
       else

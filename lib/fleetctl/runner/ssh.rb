@@ -3,7 +3,7 @@ module Fleetctl
     class SSH < ::Fleetctl::Runner::Runner
       def run(host: @options.fleet_host, user: @options.fleet_user, ssh_options: {})
         begin
-          ssh_options = Fleetctl.options.ssh_options.merge(ssh_options)
+          ssh_options = @options.ssh_options.merge(ssh_options)
           # return @output if @output
           @options.logger.info "#{self.class.name} #{user}@#{host} RUNNING: #{command.inspect}"
           Net::SSH.start(host, user, ssh_options) do |ssh|
