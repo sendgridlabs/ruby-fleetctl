@@ -42,7 +42,7 @@ module Fleet
 
     # run the command on host (string, array of command + args, whatever) and return stdout
     def ssh(*command, port: 22)
-      runner = Fleetctl::Runner::SSH.new([*command].flatten.compact.join(' '))
+      runner = Fleetctl::Runner::SSH.new(@controller.options, [*command].flatten.compact.join(' '))
       runner.run(host: ip, ssh_options: { port: port })
       runner.output
     end
@@ -51,7 +51,7 @@ module Fleet
     # assumes that this unit corresponds to a docker container
     # TODO: split this sort of docker-related functionality out into a separate class
     def docker_port(internal_port, container_name = name)
-      docker_runner = Fleetctl::Runner::SSH.new('docker', 'port', container_name, internal_port)
+      docker_runner = Fleetctl::Runner::SSH.new(@controller.options, 'docker', 'port', container_name, internal_port)
       docker_runner.run(host: ip)
       output = docker_runner.output
       if output
