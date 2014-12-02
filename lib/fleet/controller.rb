@@ -101,12 +101,12 @@ module Fleet
 
       unit_hashes = nil
 
-      Fleetctl::Command.new(@options, 'list-units', '-l', '-fields=unit,load,active,sub,machine') do |runner|
+      Fleetctl::Command.new(@options, 'list-units', '-l', '-fields=unit,load,active,sub,desc,machine') do |runner|
         runner.run(host: host)
         unit_hashes = Fleetctl::TableParser.parse(@options, runner.output)
       end
 
-      Fleetctl::Command.new(@options, 'list-unit-files', '-full', '-fields=unit,desc,state') do |runner|
+      Fleetctl::Command.new(@options, 'list-unit-files', '-full', '-fields=unit,state') do |runner|
         runner.run(host: host)
         parse_units(runner.output, unit_hashes)
       end
@@ -123,7 +123,6 @@ module Fleet
         end
 
         if founded_units.size == 1
-          unit_attrs[:desc] = founded_units[0][:desc]
           unit_attrs[:state] = founded_units[0][:state]
         end
 
