@@ -28,6 +28,6 @@ module Fleetctl
         @options.logger.error('ERROR in Fleetctl::TableParser.parse - no header row found')
         []
       end
-    end  
+    end
   end
 end
