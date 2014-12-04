@@ -125,16 +125,16 @@ module Fleet
         if founded_units.size == 1
           unit_attrs[:desc] = founded_units[0][:desc]
           unit_attrs[:state] = founded_units[0][:state]
-        end
 
-        if unit_attrs[:machine]
-          machine_id, machine_ip = unit_attrs[:machine].split('/')
-          unit_attrs[:machine] = cluster.add_or_find(Fleet::Machine.new(id: machine_id, ip: machine_ip))
-        end
+          if unit_attrs[:machine]
+            machine_id, machine_ip = unit_attrs[:machine].split('/')
+            unit_attrs[:machine] = cluster.add_or_find(Fleet::Machine.new(id: machine_id, ip: machine_ip))
+          end
 
-        unit_attrs[:name] = unit_attrs.delete(:unit)
-        unit_attrs[:controller] = self
-        @units.add_or_find(Fleet::Unit.new(unit_attrs))
+          unit_attrs[:name] = unit_attrs.delete(:unit)
+          unit_attrs[:controller] = self
+          @units.add_or_find(Fleet::Unit.new(unit_attrs))
+        end
       end
     end
 
